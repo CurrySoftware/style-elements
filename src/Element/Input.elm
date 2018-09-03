@@ -541,7 +541,7 @@ textHelper kind addedOptions style attributes input =
                         { node = "textarea"
                         , style = Just style
                         , attrs =
-                            (Internal.Width (Style.Fill 1) :: Attr.inlineStyle "resize" "none" :: Events.onInput input.onChange :: textValueAttr input.value :: attributes)
+                            (Internal.Width (Style.Fill 1) :: Attr.inlineStyle "resize" "none" ::  Events.on "change" (Json.map input.onChange Events.targetValue) :: textValueAttr input.value :: attributes)
                                 |> (withPlaceholder >> withReadonly >> withError >> withSpellCheck >> addOptionsAsAttrs options)
                         , child =
                             Internal.Text
@@ -557,7 +557,7 @@ textHelper kind addedOptions style attributes input =
                         { node = "input"
                         , style = Just style
                         , attrs =
-                            (Internal.Width (Style.Fill 1) :: type_ kindAsText :: Events.onInput input.onChange :: textValueAttr input.value :: attributes)
+                            (Internal.Width (Style.Fill 1) :: type_ kindAsText ::  Events.on "change" (Json.map input.onChange Events.targetValue) :: textValueAttr input.value :: attributes)
                                 |> (withPlaceholder >> withDisabled >> withError >> addOptionsAsAttrs options)
                         , child = Internal.Empty
                         , absolutelyPositioned = Nothing
