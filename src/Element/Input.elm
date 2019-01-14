@@ -1,55 +1,13 @@
-module Element.Input
-    exposing
-        ( Checkbox
-        , Choice
-        , ChoiceState(..)
-        , Error
-        , Label
-        , Option
-        , Radio
-        , Select
-        , SelectMsg
-        , SelectWith
-        , StyledCheckbox
-        , Text
-        , allowSpellcheck
-        , autocomplete
-        , autofill
-        , autofillSection
-        , checkbox
-        , choice
-        , clear
-        , currentPassword
-        , disabled
-        , dropMenu
-        , email
-        , errorAbove
-        , errorBelow
-        , focusOnLoad
-        , hiddenLabel
-        , labelAbove
-        , labelBelow
-        , labelLeft
-        , labelRight
-        , menu
-        , menuAbove
-        , multiline
-        , newPassword
-        , placeholder
-        , radio
-        , radioKey
-        , radioRow
-        , search
-        , select
-        , selected
-        , styledCheckbox
-        , styledChoice
-        , styledSelectChoice
-        , text
-          -- , textKey
-        , updateSelection
-        , username
-        )
+module Element.Input exposing
+    ( checkbox, Checkbox, styledCheckbox, StyledCheckbox
+    , Text, text, textOnInput, multiline, search, email
+    , username, newPassword, currentPassword
+    , Radio, radio, radioRow, Choice, choice, styledChoice, styledSelectChoice, radioKey, ChoiceState(..)
+    , select, Select, SelectWith, autocomplete, dropMenu, menu, menuAbove, selected, SelectMsg, updateSelection, clear
+    , Label, labelAbove, labelBelow, labelLeft, labelRight, placeholder, hiddenLabel
+    , Option, Error, errorAbove, errorBelow, disabled, focusOnLoad, autofill, autofillSection, allowSpellcheck
+    -- , textKey
+    )
 
 {-| Input Elements
 
@@ -94,6 +52,7 @@ import Html.Events
 import Json.Decode as Json
 import Style.Internal.Model as Style exposing (Length)
 import Style.Internal.Selector
+
 
 
 {- Attributes -}
@@ -225,12 +184,14 @@ checkbox style attributes input =
         withDisabled attrs =
             if isDisabled then
                 Attr.class "disabled-input" :: disabledAttr True :: attrs
+
             else
                 pointer :: attrs
 
         withError attrs =
             if not <| List.isEmpty errs then
                 Attr.attribute "aria-invalid" "true" :: attrs
+
             else
                 attrs
 
@@ -292,6 +253,7 @@ type alias StyledCheckbox style variation msg =
                     checkboxStyle =
                         if checked then
                             CheckboxChecked
+
                         else
                             Checkbox
                 in
@@ -305,12 +267,14 @@ styledCheckbox style attributes input =
         withDisabled attrs =
             if isDisabled then
                 Attr.class "disabled-input" :: disabledAttr True :: attrs
+
             else
                 pointer :: attrs
 
         withError attrs =
             if not <| List.isEmpty errs then
                 Attr.attribute "aria-invalid" "true" :: attrs
+
             else
                 attrs
 
@@ -356,6 +320,7 @@ styledCheckbox style attributes input =
 
 type TextKind
     = Plain
+    | OnInput
     | Search
     | Password
     | Email
@@ -471,18 +436,21 @@ textHelper kind addedOptions style attributes input =
         withDisabled attrs =
             if List.any ((==) Disabled) options then
                 Attr.class "disabled-input" :: disabledAttr True :: attrs
+
             else
                 attrs
 
         withReadonly attrs =
             if List.any ((==) Disabled) options then
                 Attr.class "disabled-input" :: readonlyAttr True :: attrs
+
             else
                 attrs
 
         withSpellCheck attrs =
             if List.any ((==) SpellCheck) options then
                 spellcheckAttr True :: attrs
+
             else
                 spellcheckAttr False :: attrs
 
@@ -509,6 +477,7 @@ textHelper kind addedOptions style attributes input =
         withError attrs =
             if not <| List.isEmpty errors then
                 Attr.attribute "aria-invalid" "true" :: attrs
+
             else
                 attrs
 
@@ -541,6 +510,7 @@ textHelper kind addedOptions style attributes input =
         withAutofocus attrs =
             if List.any ((==) FocusOnLoad) options then
                 autofocusAttr True :: attrs
+
             else
                 attrs
 
@@ -805,6 +775,7 @@ applyLabel maybeKey style attrs label errors isDisabled hasPointer input =
                         , attrs =
                             if hasPointer then
                                 Internal.Width (Style.Fill 1) :: pointer :: attrs
+
                             else
                                 Internal.Width (Style.Fill 1) :: attrs
                         , children = Internal.Normal children
@@ -819,6 +790,7 @@ applyLabel maybeKey style attrs label errors isDisabled hasPointer input =
                         , attrs =
                             if hasPointer then
                                 Internal.Width (Style.Fill 1) :: pointer :: attrs
+
                             else
                                 Internal.Width (Style.Fill 1) :: attrs
                         , children = Internal.Keyed (List.indexedMap (\i child -> ( key ++ "-" ++ String.fromInt i, child )) children)
@@ -876,6 +848,7 @@ applyLabel maybeKey style attrs label errors isDisabled hasPointer input =
                 , attrs =
                     if hasPointer then
                         [ pointer, spacing ]
+
                     else
                         [ spacing ]
                 , children = Internal.Normal children
@@ -1053,6 +1026,7 @@ type alias Radio option style variation msg =
                         [ el None [] <|
                             if selected then
                                 text ":D"
+
                             else
                                 text ":("
                         , text "burrito"
@@ -1109,6 +1083,7 @@ radio style attrs input =
                 , key =
                     if key == "" then
                         Nothing
+
                     else
                         Just key
                 }
@@ -1164,6 +1139,7 @@ radioRow style attrs config =
                 , key =
                     if key == "" then
                         Nothing
+
                     else
                         Just key
                 }
@@ -1277,6 +1253,7 @@ radioHelper orientation style attributes config =
         withDisabled attrs =
             if config.disabled then
                 disabledAttr True :: attrs
+
             else
                 pointer :: attrs
 
@@ -1290,6 +1267,7 @@ radioHelper orientation style attributes config =
                     if singleIsSelected then
                         [ checked True
                         ]
+
                     else
                         [ checked False
                         , Events.onCheck (\_ -> single.onChange val)
@@ -1303,6 +1281,7 @@ radioHelper orientation style attributes config =
                     [ checked multiIsSelected
                     , if multiIsSelected then
                         Events.onCheck (\_ -> multi.onChange (List.filter (\item -> item /= val) multi.selected))
+
                       else
                         Events.onCheck (\_ -> multi.onChange (val :: multi.selected))
                     ]
@@ -1346,6 +1325,7 @@ radioHelper orientation style attributes config =
                         , attrs =
                             if config.disabled then
                                 Attr.spacing 5 :: Modify.getAttrs el
+
                             else
                                 pointer :: Attr.spacing 5 :: Modify.getAttrs el
                         , children = Internal.Normal [ input, literalLabel ]
@@ -1358,6 +1338,7 @@ radioHelper orientation style attributes config =
                             view <|
                                 if valueIsSelected val then
                                     Selected
+
                                 else
                                     Idle
 
@@ -1392,6 +1373,7 @@ radioHelper orientation style attributes config =
                         , attrs =
                             if config.disabled then
                                 Attr.spacing 5 :: Modify.getAttrs viewed
+
                             else
                                 pointer :: Attr.spacing 5 :: Modify.getAttrs viewed
                         , children =
@@ -1473,6 +1455,7 @@ menuAbove =
                             [ el None [] <|
                                 if selected then
                                     text ":D"
+
                                 else
                                     text ":("
                             , text "burrito"
@@ -1559,6 +1542,7 @@ type alias SearchMenu option style variation msg =
                             [ el None [] <|
                                 if selected then
                                     text ":D"
+
                                 else
                                     text ":("
                             , text "burrito"
@@ -1602,6 +1586,7 @@ selectMenu style attrs input =
 
                     ChoiceWith _ view ->
                         Just <| view SelectedInBox
+
             else
                 Nothing
 
@@ -1663,6 +1648,7 @@ selectMenu style attrs input =
                             :: Attr.spread
                             :: Attr.width Attr.fill
                             :: attrsWithoutSpacing
+
                     else if input.isOpen && input.selected /= Nothing then
                         Events.onMouseDown (input.onUpdate CloseMenu)
                             :: pointer
@@ -1670,6 +1656,7 @@ selectMenu style attrs input =
                             :: Attr.spread
                             :: Attr.width Attr.fill
                             :: attrsWithoutSpacing
+
                     else if not input.isOpen && input.selected /= Nothing then
                         Events.onMouseDown (input.onUpdate OpenMenu)
                             :: pointer
@@ -1677,6 +1664,7 @@ selectMenu style attrs input =
                             :: Attr.spread
                             :: Attr.width Attr.fill
                             :: attrsWithoutSpacing
+
                     else
                         pointer
                             :: Attr.verticalCenter
@@ -1698,12 +1686,14 @@ selectMenu style attrs input =
                         nextEl =
                             if cache.found && cache.next == Nothing then
                                 Just <| getOptionValue option
+
                             else
                                 cache.next
 
                         prevEl =
                             if currentIsSelected && cache.prev == Nothing then
                                 cache.last
+
                             else
                                 cache.prev
 
@@ -1718,6 +1708,7 @@ selectMenu style attrs input =
                         found =
                             if not cache.found then
                                 currentIsSelected
+
                             else
                                 cache.found
 
@@ -1752,14 +1743,17 @@ selectMenu style attrs input =
         { next, prev } =
             if cursor.found == False then
                 { next = cursor.first, prev = cursor.first }
+
             else if cursor.next == Nothing && cursor.prev /= Nothing then
                 { next = cursor.first
                 , prev = cursor.prev
                 }
+
             else if cursor.prev == Nothing && cursor.next /= Nothing then
                 { next = cursor.next
                 , prev = cursor.last
                 }
+
             else
                 { next = cursor.next
                 , prev = cursor.prev
@@ -1775,6 +1769,7 @@ selectMenu style attrs input =
                                 , Attr.inlineStyle "background-color" "rgba(0,0,0,0.03)"
                                 ]
                                     ++ parentPadding
+
                             else
                                 [ Attr.attribute "aria-selected" "false" ] ++ parentPadding
 
@@ -1783,6 +1778,7 @@ selectMenu style attrs input =
                                 Internal.Expand
                                     :: Attr.attribute "role" "menuitemradio"
                                     :: isSelected
+
                             else
                                 Events.onClick (input.onUpdate (Batch [ CloseMenu, SelectValue (Just val) ]))
                                     :: Internal.Expand
@@ -1798,6 +1794,7 @@ selectMenu style attrs input =
                             if Just val == input.selected then
                                 Attr.attribute "aria-selected" "true"
                                     :: parentPadding
+
                             else
                                 Attr.attribute "aria-selected" "false" :: parentPadding
 
@@ -1806,6 +1803,7 @@ selectMenu style attrs input =
                                 Internal.Expand
                                     :: Attr.attribute "role" "menuitemradio"
                                     :: isSelected
+
                             else
                                 Events.onClick (input.onUpdate (Batch [ CloseMenu, SelectValue (Just val) ]))
                                     :: Internal.Expand
@@ -1815,6 +1813,7 @@ selectMenu style attrs input =
                         viewState =
                             if Just val == input.selected then
                                 Selected
+
                             else
                                 Idle
                     in
@@ -1832,11 +1831,13 @@ selectMenu style attrs input =
                         , if not isDisabled then
                             Just
                                 (tabindex 0)
+
                           else
                             Nothing
                         , Just (Attr.inlineStyle "z-index" "20")
                         , if isDisabled then
                             Nothing
+
                           else
                             Just
                                 (Attr.toAttr <|
@@ -1845,6 +1846,7 @@ selectMenu style attrs input =
                                 )
                         , if isDisabled then
                             Nothing
+
                           else
                             Just
                                 (Attr.toAttr <|
@@ -1853,6 +1855,7 @@ selectMenu style attrs input =
                                 )
                         , if isDisabled then
                             Nothing
+
                           else
                             Just <|
                                 onKeyLookup <|
@@ -1862,25 +1865,31 @@ selectMenu style attrs input =
                                                 input.onUpdate
                                                     (if input.isOpen then
                                                         CloseMenu
+
                                                      else
                                                         OpenMenu
                                                     )
+
                                         else if key == downArrow && not input.isOpen then
                                             Just <| input.onUpdate OpenMenu
+
                                         else if key == downArrow && input.isOpen then
                                             Maybe.map
                                                 (\x ->
                                                     input.onUpdate (SelectValue (Just x))
                                                 )
                                                 next
+
                                         else if key == upArrow && not input.isOpen then
                                             Just <| input.onUpdate OpenMenu
+
                                         else if key == upArrow && input.isOpen then
                                             Maybe.map
                                                 (\x ->
                                                     input.onUpdate (SelectValue (Just x))
                                                 )
                                                 prev
+
                                         else
                                             Nothing
                         ]
@@ -1889,6 +1898,7 @@ selectMenu style attrs input =
                 }
                 |> (if isMenuAbove then
                         Element.above
+
                     else
                         Element.below
                    )
@@ -1903,6 +1913,7 @@ selectMenu style attrs input =
                             )
                             (List.map renderOption choices)
                         ]
+
                      else
                         []
                     )
@@ -2052,6 +2063,7 @@ updateSelection msg sel =
                             , selected =
                                 if query == "" then
                                     auto.selected
+
                                 else
                                     Nothing
                         }
@@ -2237,12 +2249,14 @@ searchSelect style attrs input =
                         nextEl =
                             if cache.found && cache.next == Nothing then
                                 Just <| getOptionValue option
+
                             else
                                 cache.next
 
                         prevEl =
                             if currentIsSelected && cache.prev == Nothing then
                                 cache.last
+
                             else
                                 cache.prev
 
@@ -2257,6 +2271,7 @@ searchSelect style attrs input =
                         found =
                             if not cache.found then
                                 currentIsSelected
+
                             else
                                 cache.found
 
@@ -2291,14 +2306,17 @@ searchSelect style attrs input =
         { next, prev } =
             if cursor.found == False then
                 { next = cursor.first, prev = cursor.first }
+
             else if cursor.next == Nothing && cursor.prev /= Nothing then
                 { next = cursor.first
                 , prev = cursor.prev
                 }
+
             else if cursor.prev == Nothing && cursor.next /= Nothing then
                 { next = cursor.next
                 , prev = cursor.last
                 }
+
             else
                 { next = cursor.next
                 , prev = cursor.prev
@@ -2315,6 +2333,7 @@ searchSelect style attrs input =
         matchesQuery query opt =
             if query == "" then
                 True
+
             else
                 opt
                     |> choiceText
@@ -2336,11 +2355,13 @@ searchSelect style attrs input =
                                 , Attr.inlineStyle "background-color" "rgba(0,0,0,0.05)"
                                 , parentPadding
                                 ]
+
                             else if Just val == input.focus then
                                 [ Attr.attribute "aria-selected" "false"
                                 , Attr.inlineStyle "background-color" "rgba(0,0,0,0.03)"
                                 , parentPadding
                                 ]
+
                             else
                                 [ Attr.attribute "aria-selected" "false", parentPadding ]
 
@@ -2349,6 +2370,7 @@ searchSelect style attrs input =
                                 Internal.Expand
                                     :: Attr.attribute "role" "menuitemradio"
                                     :: isSelected
+
                             else
                                 Events.onMouseEnter (input.onUpdate <| SetFocus (Just val))
                                     :: Events.onClick (input.onUpdate (Batch [ SetFocus (Just val), SelectFocused, CloseMenu ]))
@@ -2367,11 +2389,13 @@ searchSelect style attrs input =
                                 , Attr.inlineStyle "background-color" "rgba(0,0,0,0.05)"
                                 , parentPadding
                                 ]
+
                             else if Just val == input.focus then
                                 [ Attr.attribute "aria-selected" "false"
                                 , Attr.inlineStyle "background-color" "rgba(0,0,0,0.03)"
                                 , parentPadding
                                 ]
+
                             else
                                 [ Attr.attribute "aria-selected" "false", parentPadding ]
 
@@ -2380,6 +2404,7 @@ searchSelect style attrs input =
                                 Internal.Expand
                                     :: Attr.attribute "role" "menuitemradio"
                                     :: isSelected
+
                             else
                                 Events.onMouseEnter (input.onUpdate <| SetFocus (Just val))
                                     :: Events.onClick (input.onUpdate (Batch [ SetFocus (Just val), SelectFocused, CloseMenu ]))
@@ -2390,8 +2415,10 @@ searchSelect style attrs input =
                         selectedState =
                             if Just val == input.selected then
                                 Selected
+
                             else if Just val == input.focus then
                                 Focused
+
                             else
                                 Idle
                     in
@@ -2414,31 +2441,40 @@ searchSelect style attrs input =
                         , Just (Attr.inlineStyle "z-index" "20")
                         , if isDisabled then
                             Nothing
+
                           else
                             Just <|
                                 onKeyLookup <|
                                     \key ->
                                         if (key == delete || key == backspace) && input.selected /= Nothing then
                                             Just <| input.onUpdate Clear
+
                                         else if key == tab then
                                             Just <| input.onUpdate SelectFocused
+
                                         else if key == enter then
                                             if input.isOpen then
                                                 Just <| input.onUpdate (Batch [ CloseMenu, SelectFocused ])
+
                                             else
                                                 Just <| input.onUpdate OpenMenu
+
                                         else if key == downArrow && not input.isOpen then
                                             Just <| input.onUpdate OpenMenu
+
                                         else if key == downArrow && input.isOpen then
                                             Maybe.map
                                                 (input.onUpdate << SetFocus << Just)
                                                 next
+
                                         else if key == upArrow && not input.isOpen then
                                             Just <| input.onUpdate OpenMenu
+
                                         else if key == upArrow && input.isOpen then
                                             Maybe.map
                                                 (input.onUpdate << SetFocus << Just)
                                                 prev
+
                                         else
                                             Nothing
                         ]
@@ -2479,10 +2515,12 @@ searchSelect style attrs input =
                                             , Just <| Attr.width Attr.fill
                                             , if isDisabled then
                                                 Just (disabledAttr True)
+
                                               else
                                                 Nothing
                                             , if isDisabled then
                                                 Nothing
+
                                               else
                                                 Just <|
                                                     Attr.toAttr
@@ -2491,6 +2529,7 @@ searchSelect style attrs input =
                                                         )
                                             , if isDisabled then
                                                 Nothing
+
                                               else
                                                 Just <|
                                                     Attr.toAttr
@@ -2502,6 +2541,7 @@ searchSelect style attrs input =
                                             , Just <| Attr.toAttr (Html.Attributes.class "focus-override")
                                             , if isDisabled then
                                                 Nothing
+
                                               else
                                                 Just <|
                                                     Events.onInput
@@ -2539,6 +2579,7 @@ searchSelect style attrs input =
                 }
                 |> (if isMenuAbove then
                         Element.above
+
                     else
                         Element.below
                    )
@@ -2552,6 +2593,7 @@ searchSelect style attrs input =
                             )
                             matches
                         ]
+
                      else
                         []
                     )
@@ -2625,6 +2667,7 @@ onKey desiredCode msg =
         decode code =
             if code == desiredCode then
                 Json.succeed msg
+
             else
                 Json.fail "Not the enter key"
 
