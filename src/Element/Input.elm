@@ -1,11 +1,12 @@
 module Element.Input exposing
     ( checkbox, Checkbox, styledCheckbox, StyledCheckbox
-    , Text, text, textOnInput, multiline, search, email
+    , Text, date, text, multiline, search, email
     , username, newPassword, currentPassword
     , Radio, radio, radioRow, Choice, choice, styledChoice, styledSelectChoice, radioKey, ChoiceState(..)
     , select, Select, SelectWith, autocomplete, dropMenu, menu, menuAbove, selected, SelectMsg, updateSelection, clear
     , Label, labelAbove, labelBelow, labelLeft, labelRight, placeholder, hiddenLabel
     , Option, Error, errorAbove, errorBelow, disabled, focusOnLoad, autofill, autofillSection, allowSpellcheck
+    , textOnInput
     -- , textKey
     )
 
@@ -325,6 +326,12 @@ type TextKind
     | Password
     | Email
     | TextArea
+    | Date
+
+
+date : style -> List (Attribute variation msg) -> Text style variation msg -> Element style variation msg
+date =
+    textHelper Date []
 
 
 {-| A plain text input.
@@ -506,6 +513,9 @@ textHelper kind addedOptions style attributes input =
 
                 TextArea ->
                     "text"
+
+                Date ->
+                    "date"
 
         withAutofocus attrs =
             if List.any ((==) FocusOnLoad) options then
